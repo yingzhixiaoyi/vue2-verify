@@ -94,13 +94,6 @@
       },
       imgUrl: {
         type: String,
-        default: 'http://via.placeholder.com/'
-      },
-      imgName: {
-        type: Array,
-        default() {
-          return ['350x150', '350x450']
-        }
       },
       imgSize: {
         type: Object,
@@ -126,7 +119,6 @@
         fontPos: [], // 选中的坐标信息
         checkPosArr: [], //用户点击的坐标
         num: 1,//点击的记数
-        imgRand: 0, // //随机的背景图片
         setSize: {
           imgHeight: 0,
           imgWidth: 0,
@@ -153,8 +145,6 @@
         this.fontPos.splice(0, this.fontPos.length)
         this.checkPosArr.splice(0, this.checkPosArr.length)
         this.num = 1
-        this.imgRand = Math.floor(Math.random() * this.imgName.length)
-        
         this.$nextTick(() => {
           this.setSize = this.resetSize(this)	//重新设置宽度高度
           this.refresh();
@@ -170,7 +160,7 @@
           setTimeout(() => {
             var flag = this.comparePos(this.fontPos, this.checkPosArr);
             if (flag == false) {	//验证失败
-              this.$parent.$emit('error', this)
+              this.$parent.$emit('error', false)
               this.barAreaColor = '#d9534f'
               this.barAreaBorderColor = '#d9534f'
               this.text = '验证失败'
@@ -185,7 +175,7 @@
               this.text = '验证成功'
               this.showRefresh = false
               this.bindingClick = false
-              this.$parent.$emit('success', this)
+              this.$parent.$emit('success', true)
             }
           }, 400);
           
@@ -296,6 +286,13 @@
         
         return flag;
       },
+      // 随机生成img src
+      getRandomImg() {
+        return 'https://picsum.photos/300/150/?image=' + this.getRandomNumberByRange(0, 1084);
+      },
+      getRandomNumberByRange(start, end) {
+        return Math.round(Math.random() * (end - start) + start)
+      },
       refresh: function () {
         this.tempPoints.splice(0, this.tempPoints.length)
         this.barAreaColor = '#000'
@@ -305,10 +302,8 @@
         this.fontPos.splice(0, this.fontPos.length)
         this.checkPosArr.splice(0, this.checkPosArr.length)
         this.num = 1
-        
-        this.imgRand = Math.floor(Math.random() * this.imgName.length);			//随机的背景图片
         var img = new Image();
-        img.src = this.imgUrl + this.imgName[this.imgRand];
+        img.src = this.imgUrl?this.imgUrl:this.getRandomImg()//随机的背景图片
         // 加载完成开始绘制
         var _this = this
         img.onload = function (e) {

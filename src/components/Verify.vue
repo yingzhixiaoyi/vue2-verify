@@ -15,7 +15,6 @@
                     :vSpace="vSpace"
                     :explain="explain"
                     :imgUrl="imgUrl"
-                    :imgName="imgName"
                     :showButton="showButton"
                     :imgSize="imgSize"
                     :blockSize="blockSize"
@@ -24,7 +23,8 @@
                     :checkNum="checkNum"
                     :imgArray="imgArray"
                     :words="words"
-                    ref="instance"></components>
+                    ref="instance"
+        ></components>
         <!-- 确定按钮容器 -->
         <div @click="checkCode" v-show="showButton" style="width:0; height:0;">
             <slot name="check">
@@ -53,8 +53,7 @@
           // 默认语言不输入为浏览器语言
           if (navigator.language) {
             var language = navigator.language;
-          }
-          else {
+          } else {
             var language = navigator.browserLanguage;
           }
           return language
@@ -98,9 +97,6 @@
       imgUrl: {
         type: String
       },
-      imgName: {
-        type: Array
-      },
       imgSize: {
         type: Object
       },
@@ -122,13 +118,14 @@
         type: Boolean,
         default: true
       },
-      imgArray:{
-        type:Array,
+      imgArray: {
+        type: Array,
       },
-      words:{
-        type:Array,
+      words: {
+        type: Array,
       }
     },
+    
     data() {
       return {
         // 内部类型
@@ -176,6 +173,9 @@
     computed: {
       instance() {
         return this.$refs.instance || {}
+      },
+      success(value) {
+        console.log(value, 181)
       }
     },
     watch: {

@@ -23,13 +23,13 @@
         </div>
         
         <!-- 公共部分 -->
-        <div class="verify-bar-area" :style="{width: setSize.barWidth,
+        <div class="verify-bar-area" :style="{width: barSize.width,
                                               height: barSize.height,
                                               'line-height':barSize.height}">
-            <span class="verify-msg" v-text="text"></span>
+            <span class="verify-msg"  v-text="text"></span>
             <div class="verify-left-bar"
                  :style="{width: (leftBarWidth!==undefined)?leftBarWidth: barSize.height, height: barSize.height, 'border-color': leftBarBorderColor, transaction: transitionWidth}">
-                <span class="verify-msg" v-text="finishText"></span>
+                <span class="verify-msg" style=" white-space:nowrap;"  v-text="finishText"></span>
                 <div class="verify-move-block"
                      @touchstart="start"
                      @mousedown="start"
@@ -222,7 +222,7 @@
       move: function (e) {
         if (this.status && this.isEnd == false) {
           var x = e.x;
-          let barWidth = this.setSize.barWidth.split('px')[0] - this.blockSize.width.split('px')[0] + 10
+          let barWidth = this.barSize.width.split('px')[0] - this.blockSize.width.split('px')[0] +20
           // if (!e.touches) {    //兼容移动端
           //     var x = e.clientX;
           // } else {     //兼容PC端
@@ -237,7 +237,7 @@
             }
           } else {		//普通滑动
             if (move_block_left >= this.barArea.offsetWidth - parseInt(parseInt(this.barSize.height) / 2) + 3) {
-              this.finishText = '松开验证'
+              this.finishText = ''
               move_block_left = this.barArea.offsetWidth - parseInt(parseInt(this.barSize.height) / 2) + 3;
             } else {
               this.text = '松开验证'
@@ -314,6 +314,8 @@
               this.iconClass = 'icon-check'
               this.showRefresh = false
               this.text = '验证成功'
+              this.finishText = '验证成功'
+              
               this.isEnd = true;
               this.$parent.$emit('success', true)
             } else {

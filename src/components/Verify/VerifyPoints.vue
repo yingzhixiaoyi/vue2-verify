@@ -13,12 +13,14 @@
                                                    'height': setSize.imgHeight,
                                                    'background-size' : setSize.imgWidth + ' '+ setSize.imgHeight,
                                                    'margin-bottom': vSpace + 'px'}">
-                <div class="verify-refresh" style="z-index:3" @click="refresh" v-show="showRefresh">
+                <div class="verify-refresh" style="z-index:3" @click="refresh" >
                     <i class="iconfont icon-refresh"></i>
                 </div>
+                <!-- 验证主体部分-->
                 <canvas :width="setSize.imgWidth" :height="setSize.imgHeight"
                         ref="canvas"
                         @click="bindingClick?canvasClick($event):undefined"></canvas>
+                <!--点击验证层部分 -->
                 <div v-for="(tempPoint, index) in tempPoints" :key="index" class="point-area"
                      :style="{
                         'background-color':'#1abd6c',
@@ -37,6 +39,7 @@
                 </div>
             </div>
         </div>
+        <!--验证提示信息部分-->
         <div class="verify-bar-area"
              :style="{'width': this.barSize.width,
                       'height': this.barSize.height,
@@ -69,7 +72,9 @@
   export default {
     name: 'VerifyPoints',
     props: {
-      
+      fontSize:{
+        type: String | Number,
+      },
       imgArray:{type:Array,},
       words:{type:Array,},
       //弹出式pop，固定fixed
@@ -79,12 +84,12 @@
       },
       //默认的文字数量
       defaultNum: {
-        type: Number,
+        type: String | Number,
         default: 4
       },
       //校对的文字数量
       checkNum: {
-        type: Number,
+        type:String | Number,
         default: 3
       },
       //间隔
@@ -209,7 +214,7 @@
         for (var i = 1; i <= this.defaultNum; i++) {
           fontChars[i - 1] = this.words.length > 0 ? this.words[i - 1] : this.getChars(fontStr, fontChars);
           tmp_index = Math.floor(Math.random() * 3);
-          ctx.font = fontSizeArr[tmp_index];
+          ctx.font = this.fontSize?`italic small-caps normal ${this.fontSize}px microsoft yahei`:fontSizeArr[tmp_index];
           ctx.fillStyle = _code_color2[color2Num];
           
           if (Math.floor(Math.random() * 2) == 1) {
@@ -312,7 +317,7 @@
           })
         }
         
-        this.text = '验证失败'
+        this.text = '刷新验证码'
         this.showRefresh = true
       }
     },

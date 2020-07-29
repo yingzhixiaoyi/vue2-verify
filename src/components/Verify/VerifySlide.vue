@@ -15,7 +15,7 @@
                                                    height: setSize.imgHeight,
                                                    background: 'url(' + defaultImg +')',
                                                    'background-size' : setSize.imgWidth + ' '+ setSize.imgHeight}">
-                <div class="verify-refresh" @click="refresh" v-show="showRefresh"><i class="iconfont icon-refresh"></i>
+                <div class="verify-refresh" @click="refresh" ><i class="iconfont icon-refresh"></i>
                 </div>
                 <div class="verify-gap"
                      :style="{'width': blockSize.width, 'height': blockSize.height, top: top + 'px', left: left + 'px'}"></div>
@@ -210,7 +210,7 @@
       start: function (e) {
         this.startSite = e.x
         if (this.isEnd == false) {
-          this.text = ''
+          this.text = '松开验证'
           this.moveBlockBackgroundColor = '#337ab7'
           this.leftBarBorderColor = '#337AB7'
           this.iconColor = '#fff'
@@ -286,15 +286,21 @@
               this.showRefresh = false
               this.isEnd = true;
               this.$parent.$emit('success', true)
-              
+              this.text = '验证成功'
+              this.finishText = '验证成功'
+              setTimeout(function () {
+                _this.finishText=''
+              }, 400);
             } else {
               this.moveBlockBackgroundColor = '#d9534f'
               this.leftBarBorderColor = '#d9534f'
               this.iconColor = '#fff'
               this.iconClass = 'icon-close'
-              
+              this.text = '验证失败'
+              this.finishText = '验证失败'
               
               setTimeout(function () {
+                _this.finishText=''
                 _this.refresh();
               }, 400);
               
@@ -320,6 +326,7 @@
               this.$parent.$emit('success', true)
             } else {
               this.text = '验证失败'
+              this.finishText = '验证失败'
               this.moveBlockBackgroundColor = '#d9534f'
               this.leftBarBorderColor = '#d9534f'
               this.iconColor = '#fff'
@@ -364,7 +371,7 @@
         this.moveBlockBackgroundColor = '#fff'
         this.iconColor = '#000'
         this.iconClass = 'icon-right'
-        
+        this.text = '刷新验证码'
         this.randSet()
         this.isEnd = false
         
@@ -372,7 +379,7 @@
           this.transitionWidth = ''
           this.transitionLeft = ''
           this.text = this.explain
-        }, 300)
+        }, 400)
       },
       
       //获取left值

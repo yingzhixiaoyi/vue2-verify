@@ -77,7 +77,7 @@
         type: String
       },
       fontSize: {
-        type: String
+        type: String | Number
       },
       codeLength: {
         type: Number
@@ -108,11 +108,11 @@
       },
       //默认的文字数量
       defaultNum: {
-        type: Number
+        type: String | Number
       },
       //校对的文字数量
       checkNum: {
-        type: Number
+        type: String | Number
       },
       showButton: {
         type: Boolean,

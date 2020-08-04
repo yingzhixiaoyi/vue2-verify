@@ -1,22 +1,29 @@
 {
-  "name": "vue2-verify",
-  "version": "1.1.5",
-  "keywords": ["vue", "verify", "verify code"],
+  "name": "vue2-verify-justin",
+  "version": "1.0.1-beta.0",
+  "keywords": [
+    "vue",
+    "verify",
+    "verify code"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/trionfo1993/vue2-verify.git"
+    "url": "https://github.com/yingzhixiaoyi/vue2-verify-justin.git"
   },
   "description": "Vue Verification code Project",
-  "author": "mizuka <trionfo1993@hotmail.com>",
+  "author": "justin <18818989580@163.com>",
   "license": "MIT",
   "bugs": {
-    "email": "trionfo1993@hotmail.com"
+    "email": "18818989580@163.com"
   },
   "main": "src/components/Verify.vue",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "publish:beta": "npm version prerelease --preid=beta & npm publish",
+    "publish:rc": "npm version prerelease --preid=rc & npm publish",
+    "publish:release": "npm publish"
   },
   "dependencies": {
     "vue": "^2.5.2"

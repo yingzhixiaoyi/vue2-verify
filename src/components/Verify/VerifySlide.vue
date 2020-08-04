@@ -15,7 +15,7 @@
                                                    height: setSize.imgHeight,
                                                    background: 'url(' + defaultImg +')',
                                                    'background-size' : setSize.imgWidth + ' '+ setSize.imgHeight}">
-                <div class="verify-refresh" @click="refresh" ><i class="iconfont icon-refresh"></i>
+                <div class="verify-refresh" @click="refresh"><i class="iconfont icon-refresh"></i>
                 </div>
                 <div class="verify-gap"
                      :style="{'width': blockSize.width, 'height': blockSize.height, top: top + 'px', left: left + 'px'}"></div>
@@ -26,10 +26,10 @@
         <div class="verify-bar-area" :style="{width: barSize.width,
                                               height: barSize.height,
                                               'line-height':barSize.height}">
-            <span class="verify-msg"  v-text="text"></span>
+            <span class="verify-msg" v-text="text"></span>
             <div class="verify-left-bar"
                  :style="{width: (leftBarWidth!==undefined)?leftBarWidth: barSize.height, height: barSize.height, 'border-color': leftBarBorderColor, transaction: transitionWidth}">
-                <span class="verify-msg" style=" white-space:nowrap;"  v-text="finishText"></span>
+                <span class="verify-msg" style=" white-space:nowrap;" v-text="finishText"></span>
                 <div class="verify-move-block"
                      @touchstart="start"
                      @mousedown="start"
@@ -153,7 +153,7 @@
     methods: {
       // 随机生成img src
       getRandomImg() {
-        return 'https://picsum.photos/300/150/?image=' + this.getRandomNumberByRange(0, 1084);
+        return `https://picsum.photos/${this.imgSize.width.slice(0, -2)}/${this.imgSize.height.slice(0, -2)}/?image=` + this.getRandomNumberByRange(0, 1084);
       },
       getRandomNumberByRange(start, end) {
         return Math.round(Math.random() * (end - start) + start)
@@ -222,7 +222,7 @@
       move: function (e) {
         if (this.status && this.isEnd == false) {
           var x = e.x;
-          let barWidth = this.barSize.width.split('px')[0] - this.blockSize.width.split('px')[0] +20
+          let barWidth = this.barSize.width.split('px')[0] - this.blockSize.width.split('px')[0] + 20
           // if (!e.touches) {    //兼容移动端
           //     var x = e.clientX;
           // } else {     //兼容PC端
@@ -247,8 +247,6 @@
           if (move_block_left <= 0) {
             move_block_left = parseInt(parseInt(this.blockSize.width) / 2);
           }
-          
-          
           //拖动后小方块的left值
           this.moveBlockLeft = this.selectWidth(x - this.startSite, barWidth) + "px"
           this.leftBarWidth = this.selectWidth(x - this.startSite, barWidth) + "px"
@@ -271,25 +269,20 @@
 
 //                判断是否重合
         if (this.status && this.isEnd == false) {
-          
           if (this.type !== '1') {		//图片滑动
-            
             var vOffset = parseInt(this.vOffset)
-            
             if (parseInt(this.left) >= (parseInt((this.moveBlockLeft || '').replace('px', '')) - vOffset) &&
               parseInt(this.left) <= (parseInt((this.moveBlockLeft || '').replace('px', '')) + vOffset)) {
               this.moveBlockBackgroundColor = '#5cb85c'
-//                            this.htmlDoms.left_bar.css({'border-color': '#5cb85c', 'background-color': '#fff'});
               this.leftBarBorderColor = '#5cb85c'
               this.iconColor = '#fff'
               this.iconClass = 'icon-check'
               this.showRefresh = false
               this.isEnd = true;
               this.$parent.$emit('success', true)
-              this.text = '验证成功'
               this.finishText = '验证成功'
               setTimeout(function () {
-                _this.finishText=''
+                _this.text = ''
               }, 400);
             } else {
               this.moveBlockBackgroundColor = '#d9534f'
@@ -300,21 +293,14 @@
               this.finishText = '验证失败'
               
               setTimeout(function () {
-                _this.finishText=''
+                _this.finishText = ''
                 _this.refresh();
               }, 400);
-              
               this.$parent.$emit('error', false)
             }
-            
           } else {		//普通滑动
             if (parseInt((this.moveBlockLeft || '').replace('px', '')) >= (parseInt(this.setSize.barWidth) - parseInt(this.barSize.height) - parseInt(this.vOffset))) {
               this.moveBlockBackgroundColor = '#5cb85c'
-//                            this.htmlDoms.left_bar.css({
-//                                'color': '#4cae4c',
-//                                'border-color': '#5cb85c',
-//                                'background-color': '#fff'
-//                            });
               this.leftBarBorderColor = '#5cb85c'
               this.iconColor = '#fff'
               this.iconClass = 'icon-check'
@@ -337,11 +323,9 @@
                 _this.refresh()
                 _this.isEnd = false
               }, 400);
-              
               this.$parent.$emit('error', false)
             }
           }
-          
           this.status = false;
         }
       },
@@ -352,7 +336,6 @@
         var rand2 = Math.floor(Math.random() * 9 + 1);
         var top = rand1 * parseInt(this.setSize.imgHeight) / 15 + parseInt(this.setSize.imgHeight) * 0.1;
         var left = rand2 * parseInt(this.setSize.imgWidth) / 15 + parseInt(this.setSize.imgWidth) * 0.1;
-        
         this.top = top
         this.left = left
       },
@@ -360,21 +343,18 @@
       refresh: function () {
         this.showRefresh = true
         this.defaultImg = this.getRandomImg()
-        
         this.transitionLeft = 'left .3s'
         this.moveBlockLeft = 0
-        
         this.leftBarWidth = undefined
         this.transitionWidth = 'width .3s'
-        
         this.leftBarBorderColor = '#ddd'
         this.moveBlockBackgroundColor = '#fff'
         this.iconColor = '#000'
         this.iconClass = 'icon-right'
         this.text = '刷新验证码'
+        this.finishText = ''
         this.randSet()
         this.isEnd = false
-        
         setTimeout(() => {
           this.transitionWidth = ''
           this.transitionLeft = ''
@@ -403,8 +383,8 @@
       },
       imgUrl: {
         immediate: true,
-        handler(e,v) {
-          this.defaultImg=e?e:this.getRandomImg()
+        handler(e, v) {
+          this.defaultImg = e ? e : this.getRandomImg()
         }
       }
     },

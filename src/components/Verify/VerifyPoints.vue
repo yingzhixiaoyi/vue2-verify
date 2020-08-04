@@ -293,7 +293,7 @@
       },
       // 随机生成img src
       getRandomImg() {
-        return 'https://picsum.photos/300/150/?image=' + this.getRandomNumberByRange(0, 1084);
+        return `https://picsum.photos/${this.imgSize.width.slice(0,-2)}/${this.imgSize.height.slice(0,-2)}/?image=` + this.getRandomNumberByRange(0, 1084);
       },
       getRandomNumberByRange(start, end) {
         return Math.round(Math.random() * (end - start) + start)

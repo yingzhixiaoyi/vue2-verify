@@ -19,7 +19,7 @@
             <div class="verify-input-area">
                 <input type="text" v-model="inputValue" class="varify-input-code"/>
             </div>
-            <div class="verify-change-area" @click="setCode"><a class="verify-change-code">换一张</a></div>
+            <div class="verify-change-area" @click="setCode"><a class="verify-change-code">{{ChangeIt}}</a></div>
         </div>
     </div>
 </template>
@@ -33,6 +33,10 @@
   export default {
     name: 'VerifyCode',
     props: {
+      ChangeIt:{
+        type: String,
+        default: '换一张'
+      },
       type: {
         type: String,
         default: '1'

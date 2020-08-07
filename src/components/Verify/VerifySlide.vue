@@ -80,6 +80,22 @@
         type: String,
         default: '向右滑动完成验证'
       },
+      ReleaseValidation:{
+        type: String,
+        default: '松开验证'
+      },
+      ValidationSuccessful:{
+        type: String,
+        default: '验证成功'
+      },
+      ValidationFailed:{
+        type: String,
+        default: '验证失败'
+      },
+      RefreshVerificationVode:{
+        type: String,
+        default: '刷新验证码'
+      },
       imgUrl: {
         type: String,
       },
@@ -213,7 +229,7 @@
       start: function (e) {
         this.startSite = e.x
         if (this.isEnd == false) {
-          this.text = '松开验证'
+          this.text = this.ReleaseValidation
           this.moveBlockBackgroundColor = '#337ab7'
           this.leftBarBorderColor = '#337AB7'
           this.iconColor = '#fff'
@@ -245,7 +261,7 @@
               this.finishText = ''
               move_block_left = this.barArea.offsetWidth - parseInt(parseInt(this.barSize.height) / 2) + 3;
             } else {
-              this.text = '松开验证'
+              this.text = this.ReleaseValidation
             }
           }
           if (move_block_left <= 0) {
@@ -289,7 +305,7 @@
               this.isEnd = true;
               this.slideData.sliderSucessTime = (new Date()).getTime()
               this.$parent.$emit('success', true, this.slideData)
-              this.finishText = '验证成功'
+              this.finishText = this.ValidationSuccessful
               setTimeout(function () {
                 _this.text = ''
               }, 400);
@@ -298,8 +314,8 @@
               this.leftBarBorderColor = '#d9534f'
               this.iconColor = '#fff'
               this.iconClass = 'icon-close'
-              this.text = '验证失败'
-              this.finishText = '验证失败'
+              this.text = this.ValidationFailed
+              this.finishText = this.ValidationFailed
               
               setTimeout(function () {
                 _this.finishText = ''
@@ -314,13 +330,13 @@
               this.iconColor = '#fff'
               this.iconClass = 'icon-check'
               this.showRefresh = false
-              this.finishText = '验证成功'
+              this.finishText = this.ValidationSuccessful
               this.isEnd = true;
               this.slideData.sliderSucessTime = (new Date()).getTime()
               this.$parent.$emit('success', true, this.slideData)
             } else {
-              this.text = '验证失败'
-              this.finishText = '验证失败'
+              this.text = this.ValidationFailed
+              this.finishText = this.ValidationFailed
               this.moveBlockBackgroundColor = '#d9534f'
               this.leftBarBorderColor = '#d9534f'
               this.iconColor = '#fff'
@@ -359,7 +375,7 @@
         this.moveBlockBackgroundColor = '#fff'
         this.iconColor = '#000'
         this.iconClass = 'icon-right'
-        this.text = '刷新验证码'
+        this.text = this.RefreshVerificationVode
         this.finishText = ''
         this.randSet()
         this.isEnd = false

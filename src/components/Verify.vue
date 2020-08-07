@@ -23,6 +23,13 @@
                     :checkNum="checkNum"
                     :imgArray="imgArray"
                     :words="words"
+                    :ChangeIt="ChangeIt"
+                    :ValidationSuccessful="ValidationSuccessful"
+                    :ValidationFailed="ValidationFailed"
+                    :RefreshVerificationVode="RefreshVerificationVode"
+                    :ReleaseValidation="ReleaseValidation"
+                    :PleaseClick="PleaseClick"
+                    :pointAlphabetColor="pointAlphabetColor"
                     ref="instance"
         ></components>
         <!-- 确定按钮容器 -->
@@ -45,6 +52,13 @@
   export default {
     name: 'Vue2Verify',
     props: {
+      pointAlphabetColor:{ type: Array},
+      ChangeIt:{ type: String},
+      ValidationSuccessful:{ type: String},
+      ValidationFailed:{ type: String},
+      RefreshVerificationVode:{ type: String},
+      ReleaseValidation:{ type: String},
+      PleaseClick:{ type: String},
       // 双语化
       locale: {
         require: false,

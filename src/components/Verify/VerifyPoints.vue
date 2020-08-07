@@ -57,7 +57,6 @@
    * */
   
   import {resetSize, _code_chars, _code_color1, _code_color2} from '../../lib/util'
-  
   function getOffset(Node, offset = {top: 0, left: 0}) {
     if (Node == document.body) {//当该节点为body节点时，结束递归
       return offset;
@@ -127,6 +126,29 @@
             height: '40px'
           }
         }
+      },
+      ValidationSuccessful: {
+        type: String,
+        default: '验证成功'
+      },
+      ValidationFailed: {
+        type: String,
+        default: '验证失败'
+      },
+      RefreshVerificationVode: {
+        type: String,
+        default: '刷新验证码'
+      },
+      PleaseClick: {
+        type: String,
+        default: '请顺序点击'
+      },
+      //显示颜色集合
+      pointAlphabetColor:{
+        type: Array,
+        default() {
+          return []
+        }
       }
     },
     data() {
@@ -146,7 +168,12 @@
         barAreaColor: undefined,
         barAreaBorderColor: undefined,
         showRefresh: true,
-        bindingClick: true
+        bindingClick: true,
+        slideData: {
+          sliderDownTime: '',//鼠标按下时间
+          travel: [],//鼠标移动轨迹
+          sliderSucessTime: ''//验证成功的时间
+        },
       }
     },
     computed: {
@@ -170,7 +197,6 @@
       canvasClick(e) {
         this.checkPosArr.push(this.getMousePos(this.$refs.canvas, e));
         if (this.num == this.checkNum) {
-          
           this.num = this.createPoint(this.getMousePos(this.$refs.canvas, e));
           setTimeout(() => {
             var flag = this.comparePos(this.fontPos, this.checkPosArr);
@@ -178,8 +204,7 @@
               this.$parent.$emit('error', false)
               this.barAreaColor = '#d9534f'
               this.barAreaBorderColor = '#d9534f'
-              this.text = '验证失败'
-              
+              this.text = this.ValidationFailed
               setTimeout(() => {
                 this.refresh();
               }, 400);
@@ -187,18 +212,26 @@
             } else {	//验证成功
               this.barAreaColor = '#4cae4c'
               this.barAreaBorderColor = '#5cb85c'
-              this.text = '验证成功'
+              this.text = this.ValidationSuccessful
               this.showRefresh = false
               this.bindingClick = false
-              this.$parent.$emit('success', true)
+              this.slideData.sliderSucessTime = (new Date()).getTime()//验证成功的时间
+              this.slideData.travel = this.checkPosArr.map(item => item['x'] + "_" + item['y'])
+              this.$parent.$emit('success', true, this.slideData)
             }
           }, 400);
           
         }
         
+        //记录第一次点击的时间
+        if (this.num == 1) {
+          this.slideData.sliderDownTime = (new Date()).getTime() //鼠标按下时间
+        }
+        
         if (this.num < this.checkNum) {
           this.num = this.createPoint(this.getMousePos(this.$refs.canvas, e));
         }
+        
         
       },
       //绘制合成的图片
@@ -209,19 +242,19 @@
         
         // 绘制图片
         ctx.drawImage(img, 0, 0, parseInt(this.setSize.imgWidth), parseInt(this.setSize.imgHeight));
-        
         // 绘制水印
         var fontSizeArr = ['italic small-caps bold 20px microsoft yahei', 'small-caps normal 25px arial', '34px microsoft yahei'];
         var fontStr = '天地玄黄宇宙洪荒日月盈昃辰宿列张寒来暑往秋收冬藏闰余成岁律吕调阳云腾致雨露结为霜金生丽水玉出昆冈剑号巨阙珠称夜光果珍李柰菜重芥姜海咸河淡鳞潜羽翔龙师火帝鸟官人皇始制文字乃服衣裳推位让国有虞陶唐吊民伐罪周发殷汤坐朝问道垂拱平章爱育黎首臣伏戎羌遐迩体率宾归王';	//不重复的汉字
         var fontChars = [];
         var avg = Math.floor(parseInt(this.setSize.imgWidth) / (parseInt(this.defaultNum) + 1));
         var tmp_index = '';
-        var color2Num = Math.floor(Math.random() * 5);
         for (var i = 1; i <= this.defaultNum; i++) {
+          //每次随机选择字体颜色
+          var color2Num = Math.floor(Math.random() * (this.pointAlphabetColor.length||5));
           fontChars[i - 1] = this.words.length > 0 ? this.words[i - 1] : this.getChars(fontStr, fontChars);
           tmp_index = Math.floor(Math.random() * 3);
           ctx.font = this.fontSize ? `italic small-caps normal ${this.fontSize}px microsoft yahei` : fontSizeArr[tmp_index];
-          ctx.fillStyle = _code_color2[color2Num];
+          ctx.fillStyle =this.pointAlphabetColor.length?this.pointAlphabetColor[color2Num]: _code_color2[color2Num];
           if (Math.floor(Math.random() * 2) == 1) {
             var tmp_y = Math.floor(parseInt(this.setSize.imgHeight) / 2) + tmp_index * 20 + 20
           } else {
@@ -237,7 +270,7 @@
         for (var i = 0; i < this.fontPos.length; i++) {
           msgStr += this.fontPos[i].char + ',';
         }
-        this.text = '请顺序点击【' + msgStr.substring(0, msgStr.length - 1) + '】'
+        this.text = this.PleaseClick + '【' + msgStr.substring(0, msgStr.length - 1) + '】'
         return this.fontPos;
       },
       //获取坐标
@@ -288,7 +321,6 @@
             break;
           }
         }
-        
         return flag;
       },
       // 随机生成img src
@@ -298,11 +330,18 @@
       getRandomNumberByRange(start, end) {
         return Math.round(Math.random() * (end - start) + start)
       },
+      //刷新验证码
       refresh: function () {
         this.tempPoints.splice(0, this.tempPoints.length)
         this.barAreaColor = '#000'
         this.barAreaBorderColor = '#ddd'
         this.bindingClick = true
+        
+        this.slideData = {
+          sliderDownTime: '',//鼠标按下时间
+          travel: [],//鼠标移动轨迹
+          sliderSucessTime: ''//验证成功的时间
+        }
         
         this.fontPos.splice(0, this.fontPos.length)
         this.checkPosArr.splice(0, this.checkPosArr.length)
@@ -317,7 +356,7 @@
           })
         }
         
-        this.text = '刷新验证码'
+        this.text = this.RefreshVerificationVode
         this.showRefresh = true
       }
     },

@@ -26,7 +26,7 @@
                     ref="instance"
         ></components>
         <!-- 确定按钮容器 -->
-        <div @click="checkCode" v-show="showButton" style="width:0; height:0;">
+        <div @click="checkCode" v-show="showButton" >
             <slot name="check">
                 <button class="verify-btn">{{i18n('ok')}}</button>
             </slot>
@@ -175,7 +175,6 @@
         return this.$refs.instance || {}
       },
       success(value) {
-        console.log(value, 181)
       }
     },
     watch: {

@@ -13,7 +13,7 @@
                                                    'height': setSize.imgHeight,
                                                    'background-size' : setSize.imgWidth + ' '+ setSize.imgHeight,
                                                    'margin-bottom': vSpace + 'px'}">
-                <div class="verify-refresh" style="z-index:3" @click="refresh" >
+                <div class="verify-refresh" style="z-index:3" @click="refresh">
                     <i class="iconfont icon-refresh"></i>
                 </div>
                 <!-- 验证主体部分-->
@@ -72,11 +72,21 @@
   export default {
     name: 'VerifyPoints',
     props: {
-      fontSize:{
+      fontSize: {
         type: String | Number,
       },
-      imgArray:{type:Array,},
-      words:{type:Array,},
+      imgArray: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      words: {
+        type: Array,
+        default() {
+          return []
+        },
+      },
       //弹出式pop，固定fixed
       mode: {
         type: String,
@@ -89,7 +99,7 @@
       },
       //校对的文字数量
       checkNum: {
-        type:String | Number,
+        type: String | Number,
         default: 3
       },
       //间隔
@@ -203,41 +213,31 @@
         // 绘制水印
         var fontSizeArr = ['italic small-caps bold 20px microsoft yahei', 'small-caps normal 25px arial', '34px microsoft yahei'];
         var fontStr = '天地玄黄宇宙洪荒日月盈昃辰宿列张寒来暑往秋收冬藏闰余成岁律吕调阳云腾致雨露结为霜金生丽水玉出昆冈剑号巨阙珠称夜光果珍李柰菜重芥姜海咸河淡鳞潜羽翔龙师火帝鸟官人皇始制文字乃服衣裳推位让国有虞陶唐吊民伐罪周发殷汤坐朝问道垂拱平章爱育黎首臣伏戎羌遐迩体率宾归王';	//不重复的汉字
-        
-        
         var fontChars = [];
-        
         var avg = Math.floor(parseInt(this.setSize.imgWidth) / (parseInt(this.defaultNum) + 1));
         var tmp_index = '';
         var color2Num = Math.floor(Math.random() * 5);
-        
         for (var i = 1; i <= this.defaultNum; i++) {
           fontChars[i - 1] = this.words.length > 0 ? this.words[i - 1] : this.getChars(fontStr, fontChars);
           tmp_index = Math.floor(Math.random() * 3);
-          ctx.font = this.fontSize?`italic small-caps normal ${this.fontSize}px microsoft yahei`:fontSizeArr[tmp_index];
+          ctx.font = this.fontSize ? `italic small-caps normal ${this.fontSize}px microsoft yahei` : fontSizeArr[tmp_index];
           ctx.fillStyle = _code_color2[color2Num];
-          
           if (Math.floor(Math.random() * 2) == 1) {
             var tmp_y = Math.floor(parseInt(this.setSize.imgHeight) / 2) + tmp_index * 20 + 20
           } else {
             var tmp_y = Math.floor(parseInt(this.setSize.imgHeight) / 2) - tmp_index * 20
           }
-          
           ctx.fillText(fontChars[i - 1], avg * i, tmp_y);
           this.fontPos[i - 1] = {'char': fontChars[i - 1], 'x': avg * i, 'y': tmp_y}
         }
-        
         for (var i = 0; i < (this.defaultNum - this.checkNum); i++) {
           this.shuffle(this.fontPos).pop();
         }
-        
         var msgStr = '';
         for (var i = 0; i < this.fontPos.length; i++) {
           msgStr += this.fontPos[i].char + ',';
         }
-        
         this.text = '请顺序点击【' + msgStr.substring(0, msgStr.length - 1) + '】'
-        
         return this.fontPos;
       },
       //获取坐标
@@ -293,7 +293,7 @@
       },
       // 随机生成img src
       getRandomImg() {
-        return `https://picsum.photos/${this.imgSize.width.slice(0,-2)}/${this.imgSize.height.slice(0,-2)}/?image=` + this.getRandomNumberByRange(0, 1084);
+        return `https://picsum.photos/${this.imgSize.width.slice(0, -2)}/${this.imgSize.height.slice(0, -2)}/?image=` + this.getRandomNumberByRange(0, 1084);
       },
       getRandomNumberByRange(start, end) {
         return Math.round(Math.random() * (end - start) + start)
@@ -308,7 +308,7 @@
         this.checkPosArr.splice(0, this.checkPosArr.length)
         this.num = 1
         var img = new Image();
-        img.src = this.imgUrl?this.imgUrl:this.getRandomImg()//随机的背景图片
+        img.src = this.imgUrl ? this.imgUrl : this.getRandomImg()//随机的背景图片
         // 加载完成开始绘制
         var _this = this
         img.onload = function (e) {

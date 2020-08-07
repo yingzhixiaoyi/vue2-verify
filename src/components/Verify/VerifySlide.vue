@@ -1,16 +1,14 @@
 <template>
-    <div style="position: relative;"
-         @mouseover="showImage = true"
-         @mouseout="showImage = true">
+    <div
+        @mouseover="showImage = true"
+        @mouseout="showImage = true">
         <!-- puzzle的情况 -->
         <div v-if="type === '2'" class="verify-img-out"
              v-show="showImage"
              @mouseover="showImage = true"
              @mouseout="showImage = true"
-             :style="{display: mode === 'pop'?'none':undefined,
-                      position: mode === 'pop'?'absolute':'relative',
-                      height: (parseInt(setSize.imgHeight) + vSpace) + 'px',
-                      bottom: mode ==='pop'?'42px':undefined}">
+             :style="{ height: (parseInt(setSize.imgHeight) + vSpace) + 'px' }"
+        >
             <div class="verify-img-panel" :style="{width: setSize.imgWidth,
                                                    height: setSize.imgHeight,
                                                    background: 'url(' + defaultImg +')',
@@ -36,16 +34,16 @@
                      :style="{width: barSize.height, height: barSize.height, 'background-color': moveBlockBackgroundColor, left: moveBlockLeft, transition: transitionLeft}">
                     <i :class="['verify-icon iconfont', iconClass]"
                        :style="{color: iconColor}"></i>
-                    <div v-if="type === '2'"
-                         class="verify-sub-block"
-                         :style="{'width': blockSize.width,
+                    <div
+                        class="verify-sub-block"
+                        :style="{'width': blockSize.width,
                                   'height': blockSize.height,
                                   'top': '-' + (parseInt(setSize.imgHeight) - top + vSpace) + 'px',
                                   'background-image': 'url(' + defaultImg + ')',
                                   'background-size': setSize.imgWidth + ' ' + setSize.imgHeight,
                                   'background-position-y': '-' + top + 'px',
                                   'background-position-x': '-' + left + 'px'}"
-                         v-show="mode !== 'pop' && showImage"></div>
+                        v-show="  type === '2'&& showImage"></div>
                 </div>
             </div>
         </div>
@@ -139,7 +137,12 @@
         showRefresh: true,
         transitionLeft: '',
         transitionWidth: '',
-        defaultImg: ''
+        defaultImg: '',
+        slideData: {
+          sliderDownTime: '',//鼠标按下时间
+          travel: [],//鼠标移动轨迹
+          sliderSucessTime: ''//验证成功的时间
+        },
       }
     },
     computed: {
@@ -215,7 +218,9 @@
           this.leftBarBorderColor = '#337AB7'
           this.iconColor = '#fff'
           e.stopPropagation();
+          this.slideData.sliderDownTime = (new Date()).getTime()
           this.status = true;
+          this.slideData.travel = []
         }
       },
       //鼠标移动
@@ -243,14 +248,18 @@
               this.text = '松开验证'
             }
           }
-          
           if (move_block_left <= 0) {
             move_block_left = parseInt(parseInt(this.blockSize.width) / 2);
           }
           //拖动后小方块的left值
           this.moveBlockLeft = this.selectWidth(x - this.startSite, barWidth) + "px"
           this.leftBarWidth = this.selectWidth(x - this.startSite, barWidth) + "px"
+          this.getTravel(e.clientX, e.clientY)
         }
+      },
+      //获取移动轨迹
+      getTravel(x, y) {
+        this.slideData.travel.push((x + "_" + y))
       },
       
       selectWidth(x, y) {
@@ -266,8 +275,7 @@
       //鼠标松开
       end: function () {
         var _this = this;
-
-//                判断是否重合
+        //判断是否重合
         if (this.status && this.isEnd == false) {
           if (this.type !== '1') {		//图片滑动
             var vOffset = parseInt(this.vOffset)
@@ -279,7 +287,8 @@
               this.iconClass = 'icon-check'
               this.showRefresh = false
               this.isEnd = true;
-              this.$parent.$emit('success', true)
+              this.slideData.sliderSucessTime = (new Date()).getTime()
+              this.$parent.$emit('success', true, this.slideData)
               this.finishText = '验证成功'
               setTimeout(function () {
                 _this.text = ''
@@ -305,11 +314,10 @@
               this.iconColor = '#fff'
               this.iconClass = 'icon-check'
               this.showRefresh = false
-              this.text = '验证成功'
               this.finishText = '验证成功'
-              
               this.isEnd = true;
-              this.$parent.$emit('success', true)
+              this.slideData.sliderSucessTime = (new Date()).getTime()
+              this.$parent.$emit('success', true, this.slideData)
             } else {
               this.text = '验证失败'
               this.finishText = '验证失败'
@@ -318,8 +326,8 @@
               this.iconColor = '#fff'
               this.iconClass = 'icon-close'
               this.isEnd = true;
-              
               setTimeout(function () {
+                _this.finishText = ''
                 _this.refresh()
                 _this.isEnd = false
               }, 400);

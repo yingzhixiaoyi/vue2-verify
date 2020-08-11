@@ -248,13 +248,16 @@
         var fontChars = [];
         var avg = Math.floor(parseInt(this.setSize.imgWidth) / (parseInt(this.defaultNum) + 1));
         var tmp_index = '';
+        let addIndex=0
         for (var i = 1; i <= this.defaultNum; i++) {
           //每次随机选择字体颜色
           var color2Num = Math.floor(Math.random() * (this.pointAlphabetColor.length||5));
           fontChars[i - 1] = this.words.length > 0 ? this.words[i - 1] : this.getChars(fontStr, fontChars);
           tmp_index = Math.floor(Math.random() * 3);
           ctx.font = this.fontSize ? `italic small-caps normal ${this.fontSize}px microsoft yahei` : fontSizeArr[tmp_index];
-          ctx.fillStyle =this.pointAlphabetColor.length?this.pointAlphabetColor[color2Num]: _code_color2[color2Num];
+          addIndex++
+          if(addIndex==this.pointAlphabetColor.length){addIndex=0}
+          ctx.fillStyle =this.pointAlphabetColor.length?this.pointAlphabetColor[addIndex]: _code_color2[color2Num];
           if (Math.floor(Math.random() * 2) == 1) {
             var tmp_y = Math.floor(parseInt(this.setSize.imgHeight) / 2) + tmp_index * 20 + 20
           } else {
